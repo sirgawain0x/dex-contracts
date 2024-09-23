@@ -6,7 +6,7 @@ import "@thirdweb-dev/contracts/base/ERC20Base.sol";
 contract DEX is ERC20Base {
     address public token;
 
-    constructor (address _token) ERC20Base(name(), symbol()) {
+    constructor (address _token, address _defaultAdmin, string memory _name, string memory _symbol) ERC20Base(_defaultAdmin, _name, _symbol) {
         token = _token;
     }
 
@@ -64,8 +64,7 @@ contract DEX is ERC20Base {
     {
         require(inputReserve > 0 && outputReserve > 0, "Invalid Reserves");
         // We are charging a fee of `1%`
-        // uint256 inputAmountWithFee = inputAmount * 99;
-        uint256 inputAmountWithFee = inputAmount;
+        uint256 inputAmountWithFee = inputAmount * 99;
         uint256 numerator = inputAmountWithFee * outputReserve;
         uint256 denominator = (inputReserve * 100) + inputAmountWithFee;
         unchecked {
@@ -73,7 +72,7 @@ contract DEX is ERC20Base {
         }
     }
 
-    function swapEthTotoken() public payable {
+    function swapEthToToken() public payable {
         uint256 _reservedTokens = getTokensInContract();
         uint256 _tokensBought = getAmountOfTokens(
             msg.value, 
